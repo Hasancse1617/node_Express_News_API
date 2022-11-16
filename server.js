@@ -4,6 +4,7 @@ require('dotenv').config()
 const cors = require("cors");
 const connectDB = require("./src/config/db");
 const userRoute = require("./src/routes/UserRoute");
+const newsRoute = require("./src/routes/NewsRoute");
 
 const app = express();
 connectDB();
@@ -12,7 +13,7 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(express.static('public'));
 app.use("/api/", userRoute);
-// app.use("/api/", teacherRoute);
+app.use("/api/", newsRoute);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, ()=>{

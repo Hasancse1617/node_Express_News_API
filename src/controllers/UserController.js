@@ -196,3 +196,42 @@ module.exports.deleteEditor = async(req, res) =>{
         return res.status(500).json({errors: [{msg: error.message}]});
     }
 }
+
+module.exports.loginEditor = async(req, res)=>{
+    const { email, password } = req.body;
+    const errors = [];
+    if(email === ''){
+        errors.push({msg: 'Email is required'});
+    }
+    if(password === ''){
+        errors.push({msg: 'Password is required'});
+    }
+    if(errors.length !== 0){
+        return res.status(400).json({errors});
+    }
+    let expiresToken = '1d';
+    try{
+        const admin = await User.findOne({ email, user_type:"Editor" });
+        if(admin){
+            if(!admin.editor_status){
+                return res.status(400).json({errors:[{msg:'You are not active Editor'}]});
+            }
+            const matched = await bcrypt.compare(password, admin.password);
+            if(matched){
+                try {
+                    const token = createToken(admin,expiresToken);
+                    return res.status(200).json({'msg':'You have successfully login',token});
+                } catch (error) {
+                    return res.status(500).json({errors: [{msg: error.message}]});
+                }
+            }else{
+                return res.status(401).json({errors:[{msg:'Password does not matched'}]});
+            }
+        }
+        else{
+            return res.status(404).json({errors:[{msg:'Email not found'}]});
+        }
+    }catch(error){
+        return res.status(500).json({errors: [{msg: error.message}]});
+    }
+}
