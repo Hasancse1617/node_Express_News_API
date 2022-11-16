@@ -3,7 +3,7 @@ const bodyParser = require("body-parser");
 require('dotenv').config()
 const cors = require("cors");
 const connectDB = require("./src/config/db");
-const adminRoute = require("./src/routes/AdminRoute");
+const userRoute = require("./src/routes/UserRoute");
 
 const app = express();
 connectDB();
@@ -11,7 +11,7 @@ app.use(cors());
 
 app.use(bodyParser.json());
 app.use(express.static('public'));
-app.use("/api/", adminRoute);
+app.use("/api/", userRoute);
 // app.use("/api/", teacherRoute);
 
 const PORT = process.env.PORT || 5000;
